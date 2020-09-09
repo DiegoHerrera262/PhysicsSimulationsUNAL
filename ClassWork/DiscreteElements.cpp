@@ -96,11 +96,9 @@ std::vector<double> System::InteractionForce(int i, int j){
 // Computation of total force over element i
 std::vector<double> System::TotalForce(int i){
   std::vector<double> Force;
-  Force.assign(Elem_DOF,0.0);
-  for(int j = 0; j<NumElems; j++)
-    if (j != i)
-      Force += InteractionForce(i,j);
-  return Force;
+  double GravConst = 100*ElementList[i].get_mass();
+  Force = ElementList[i].get_Coordinates();
+  return (-GravConst * pow(norm_squared(Force),-1.5)) * Force;
 }
 // Print Current state of system
 void System::PrintCurrState(){

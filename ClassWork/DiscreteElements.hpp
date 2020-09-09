@@ -42,6 +42,14 @@ std::vector<T> operator *(const std::vector<T> &w, std::vector<T> v){
     v[i] *= w[i];
   return v;
 }
+// Overload of square norm for vectors
+template<typename T>
+double norm_squared(const std::vector<T> &w){
+  double norm2 = 0.0;
+  for(int i = 0; i<w.size(); i++)
+    norm2 += w[i] * w[i];
+  return norm2;
+}
 // Overload of addition for vectors
 template<typename T>
 std::vector<T> operator +(std::vector<T> lhs, const std::vector<T> &rhs) {
