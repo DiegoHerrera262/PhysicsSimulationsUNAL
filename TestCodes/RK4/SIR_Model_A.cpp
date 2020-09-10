@@ -30,7 +30,7 @@ int main(void){
 
   std::vector<double> y;                // Vector of initial conditions
   y.assign(dim,0.0);
-  y[0] = 0.5; y[1] = 0.5; y[2] = 0.0;
+  y[0] = 0.999; y[1] = 0.001; y[2] = 0.0;
 
   std::vector<double> Parameters;       // Parameters for SIR Model
   Parameters.assign(2,0.0);
