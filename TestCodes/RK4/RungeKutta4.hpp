@@ -88,7 +88,23 @@ class TimeSeries{
     // Print whole TimeSeries (TESTED)
     void PrintDataSeries();
 };
-
+/*******************************************************************************
+                              FUNCTION OBJECT
+********************************************************************************
+This object is used for definig functions with user defined parameters
+*******************************************************************************/
+class Function{
+  private:
+    std::vector<double> Params;
+  public:
+    std::vector<double> get_Params(){
+      return Params;
+    }
+    void set_Params(std::vector<double> p){
+      Params = p;
+    }
+    std::vector<double> Value(double t, std::vector<double> curr_state);
+};
 /*******************************************************************************
                       RUNGE - KUTTA 4TH ORDER INTEGRATOR
 ********************************************************************************
@@ -156,7 +172,7 @@ class RK4_Solver{
     }
 /******************************************************************************/
     // Integration and Storage
-    void Integrate(std::vector<double> (*func)(double, std::vector<double>),std::vector<double> y0);
+    void Integrate(Function &DynEqns, std::vector<double> y0);
     // Wrapper for returning data drom solver
     void PrintData();
 

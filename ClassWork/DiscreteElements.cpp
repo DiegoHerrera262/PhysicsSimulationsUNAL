@@ -120,14 +120,17 @@ void System::StepEvolution(double dt){
   std::vector<double> aux_pos;
   aux_pos.assign(Elem_DOF,0.0);
   for(int i = 0; i<NumElems; i++){
-    // Compute acceleration
+    // Compute acceleration first time
     Acc = (1.0/ElementList[i].get_mass()) * TotalForce(i);
-    // Update Velocity
+    // get current velocity
     aux_vels = ElementList[i].get_Velocities();
-    aux_vels += dt * Acc;
     // Update Position
     aux_pos = ElementList[i].get_Coordinates();
-    aux_pos += dt * aux_vels;
+    aux_pos += dt * aux_vels + (0.5*dt*dt) * Acc;
+    // Update acceleration
+    Acc += (1.0/ElementList[i].get_mass()) * TotalForce(i);
+    // Update velocity
+    aux_vels += (0.5*dt) *Acc;
     // Store on Element object
     ElementList[i].set_Velocities(aux_vels);
     ElementList[i].set_Coordinates(aux_pos);

@@ -115,7 +115,7 @@ Model for solver of ODEs using Runge Kutta 4 algorithm. It has as parameters:
 - TimeSeries to store integration data
 *******************************************************************************/
 // Integration and Storage
-void RK4_Solver::Integrate(std::vector<double> (*func)(double, std::vector<double>),std::vector<double> y0){
+void RK4_Solver::Integrate(Function &DynEqns, std::vector<double> y0){
 
   // Parameters of RK4 Integration
   double t0 = t_begin;            // Initial time of simulation
@@ -140,10 +140,10 @@ void RK4_Solver::Integrate(std::vector<double> (*func)(double, std::vector<doubl
     SimulationData.InsertDataPoint(t,y);
 
     // Update auxiliar kvecs
-    k1 = func(t,y);
-    k2 = func(t+0.5*dt,y+0.5*dt*k1);
-    k3 = func(t+0.5*dt,y+0.5*dt*k2);
-    k4 = func(t+dt,y+dt*k3);
+    k1 = DynEqns.Value(t,y);
+    k2 = DynEqns.Value(t+0.5*dt,y+0.5*dt*k1);
+    k3 = DynEqns.Value(t+0.5*dt,y+0.5*dt*k2);
+    k4 = DynEqns.Value(t+dt,y+dt*k3);
 
     // Update State of the system
     y = y + (1.0/6.0 * dt) * (k1 + 2.0 * (k2 + k3) + k4);
