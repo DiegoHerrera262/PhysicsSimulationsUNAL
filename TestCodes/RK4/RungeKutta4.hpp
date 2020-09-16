@@ -123,9 +123,9 @@ class RK4_Solver{
     double t_end;
     double time_step;
     double DegOfFreed;
-    TimeSeries SimulationData;
 
   public:
+    TimeSeries SimulationData;
     // Constructor of the RK4_Solver
     RK4_Solver(double tBeg = 0.0, double tEnd = 1.0,\
       double dt = 0.1, int DOFs = 1){
