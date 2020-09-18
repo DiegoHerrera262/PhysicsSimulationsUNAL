@@ -74,6 +74,19 @@ std::vector<double> TimeSeries::GetDOFs(double t, std::vector<int> dofs){
     throw std::length_error("Point Outside Time Range");
 }
 /*******************************************************************************
+                              ELEMENT CLASS
+********************************************************************************
+Used as a discrete element for a particular many-body system. It contains the
+properties of the class that are determinant for the interaction between
+elements of the system
+*******************************************************************************/
+void Element::update_Coordinates(double dt, double coeff){
+  Coordinates += (coeff * dt) * Velocities;
+}
+void Element::update_Velocities(double dt, double coeff){
+  Velocities += (coeff * dt/mass) * Force;
+}
+/*******************************************************************************
                                 SYSTEM CLASS
 ********************************************************************************
 Used to model a system of elements described by the same set of properties.
@@ -89,16 +102,27 @@ the simulation data.
 std::vector<double> System::InteractionForce(int i, int j){
   // Model Gravitational Attraction with elastic repulsion
   std::vector<double> Rij;              // Relative vector of two elements
-  Rij = ElementList[j].get_Coordinates();
-  Rij +=  -1.0 * ElementList[i].get_Coordinates();
-  return std::pow(2.0*M_PI,2) * Rij;
+  Rij = ElementList[i].Coordinates + (-1.0) * ElementList[j].Coordinates;
+  double factor = -ElementList[i].mass * ElementList[j].mass;
+  factor *= pow(norm_squared(Rij),-1.5);
+  return factor * Rij;
 }
 // Computation of total force over element i
-std::vector<double> System::TotalForce(int i){
+void System::SetTotalForce(int i){
+  /*
   std::vector<double> Force;
   double GravConst = 100*ElementList[i].get_mass();
   Force = ElementList[i].get_Coordinates();
-  return (-GravConst * pow(norm_squared(Force),-1.5)) * Force;
+  Force = (-GravConst * pow(norm_squared(Force),-1.5)) * Force;
+  */
+
+  std::vector<double> Force;
+  Force.assign(Elem_DOF,0.0);
+  for(int j = 0; j<NumElems; j++)
+    if(j != i)
+      Force += InteractionForce(i,j);
+
+  ElementList[i].Force = Force;
 }
 // Print Current state of system
 void System::PrintCurrState(){
@@ -111,30 +135,31 @@ void System::PrintCurrState(){
   std::cout << std::endl;
 }
 // Perform Step Evolution of System Using Velocity Verlet
+void System::update_all_Coordinates(double dt, double param){
+  // Update position (FOR ALL PARTICLES)
+  for(int i = 0; i<NumElems; i++)
+    ElementList[i].update_Coordinates(dt,param);
+  // Update forces
+  for(int i = 0; i<NumElems; i++)
+    SetTotalForce(i);
+}
+void System::update_all_Velocities(double dt, double param){
+  // Update velocities with coeff1 (FOR ALL PARTICLES)
+  for(int i = 0; i<NumElems; i++)
+    ElementList[i].update_Velocities(dt,param);
+}
 void System::StepEvolution(double dt){
-  // Acceleration at current time
-  std::vector<double> Acc;
-  Acc.assign(Elem_DOF,0.0);
-  std::vector<double> aux_vels;
-  aux_vels.assign(Elem_DOF,0.0);
-  std::vector<double> aux_pos;
-  aux_pos.assign(Elem_DOF,0.0);
-  for(int i = 0; i<NumElems; i++){
-    // Compute acceleration first time
-    Acc = (1.0/ElementList[i].get_mass()) * TotalForce(i);
-    // get current velocity
-    aux_vels = ElementList[i].get_Velocities();
-    // Update Position
-    aux_pos = ElementList[i].get_Coordinates();
-    aux_pos += dt * aux_vels + (0.5*dt*dt) * Acc;
-    // Update acceleration
-    Acc += (1.0/ElementList[i].get_mass()) * TotalForce(i);
-    // Update velocity
-    aux_vels += (0.5*dt) *Acc;
-    // Store on Element object
-    ElementList[i].set_Velocities(aux_vels);
-    ElementList[i].set_Coordinates(aux_pos);
-  }
+
+  update_all_Coordinates(dt,IntegParams[0]);
+  update_all_Velocities(dt,IntegParams[3]);
+  update_all_Coordinates(dt,IntegParams[2]);
+  update_all_Velocities(dt,IntegParams[1]);
+  update_all_Coordinates(dt,IntegParams[4]);
+  update_all_Velocities(dt,IntegParams[1]);
+  update_all_Coordinates(dt,IntegParams[2]);
+  update_all_Velocities(dt,IntegParams[3]);
+  update_all_Coordinates(dt,IntegParams[0]);
+
 }
 // Perform Time evolution
 void System::Evolve(double t_begin, double t_end, double dt){

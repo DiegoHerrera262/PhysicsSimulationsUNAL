@@ -146,6 +146,8 @@ class Element{
     // These following properties of class are mandatory
     std::vector<double> Coordinates;
     std::vector<double> Velocities;
+    std::vector<double> Force;
+    friend class System;
 
   public:
     Element(double m = 1.0, double rad = 1.0, int DOFs = 3){
@@ -173,6 +175,10 @@ class Element{
       if (v.size() == NumDOFs)
         Velocities = v;
     }
+    void set_Force(std::vector<double> f){
+      if (f.size() == NumDOFs)
+        Force = f;
+    }
     // F**king getters
     double get_mass(){
       return mass;
@@ -189,6 +195,11 @@ class Element{
     std::vector<double> get_Velocities(){
       return Velocities;
     }
+    std::vector<double> get_Force(){
+      return Force;
+    }
+    void update_Coordinates(double dt, double coeff);
+    void update_Velocities(double dt, double coeff);
 };
 /*******************************************************************************
                                 SYSTEM CLASS
@@ -204,6 +215,7 @@ class System{
   private:
     int NumElems;
     int Elem_DOF;
+    std::vector<double> IntegParams;
 
   public:
     Element *ElementList;
@@ -221,14 +233,23 @@ class System{
         ElementList[ii].set_Coordinates(aux);
         ElementList[ii].set_Velocities(aux);
       }
+      // Initailize integrator parameters
+      IntegParams.assign(5,0.0);
+      IntegParams[0] = 0.1786178958448091e00;                   // zeta
+      IntegParams[1] = -0.2123418310626054e0;                   // lambda
+      IntegParams[2] = -0.6626458266981849e-1;                  // chi
+      IntegParams[3] = (1-2*IntegParams[1])/2.0;                // Coeff1
+      IntegParams[4] = 1-2*(IntegParams[2] + IntegParams[0]);   // Coeff2
     }
     // Element interaction force
     std::vector<double> InteractionForce(int i, int j);
     // Net Force experienced by an element
-    std::vector<double> TotalForce(int i);
+    void SetTotalForce(int i);
     // Print current state of system
     void PrintCurrState();
     // Time Step evolution
+    void update_all_Coordinates(double dt, double param);
+    void update_all_Velocities(double dt, double param);
     void StepEvolution(double dt);
     // Time Evolution for log register
     void Evolve(double t_begin, double t_end, double dt);
