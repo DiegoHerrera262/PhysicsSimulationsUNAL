@@ -57,6 +57,15 @@ std::vector<T> operator +(std::vector<T> lhs, const std::vector<T> &rhs) {
         throw std::length_error("vectors must be same size to add");
     return lhs += rhs;
 }
+template<typename T>
+double dot(const std::vector<T> &lhs, const std::vector<T> &rhs) {
+    if (lhs.size() != rhs.size())
+        throw std::length_error("vectors must be same size to add");
+    double d = 0.0;
+    for(int i = 0; i<lhs.size(); i++)
+      d += lhs[i] * rhs[i];
+    return d;
+}
 /*******************************************************************************
                             TIME SERIES CLASS
 ********************************************************************************
