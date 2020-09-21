@@ -99,6 +99,7 @@ the simulation data.
 /******************************************************************************
                 Interaction Force of the System (VERY IMPORTANT)
 *******************************************************************************/
+/*
 std::vector<double> System::InteractionForce(int i, int j){
   // Model Gravitational Attraction with elastic repulsion
   std::vector<double> Rij;              // Relative vector of two elements
@@ -107,14 +108,10 @@ std::vector<double> System::InteractionForce(int i, int j){
   factor *= pow(norm_squared(Rij),-1.5);
   return factor * Rij;
 }
+*/
 // Computation of total force over element i
+/*
 void System::SetTotalForce(int i){
-  /*
-  std::vector<double> Force;
-  double GravConst = 100*ElementList[i].get_mass();
-  Force = ElementList[i].get_Coordinates();
-  Force = (-GravConst * pow(norm_squared(Force),-1.5)) * Force;
-  */
 
   std::vector<double> Force;
   Force.assign(Elem_DOF,0.0);
@@ -124,6 +121,7 @@ void System::SetTotalForce(int i){
 
   ElementList[i].Force = Force;
 }
+*/
 // Print Current state of system
 void System::PrintCurrState(){
   std::vector<double> data;
