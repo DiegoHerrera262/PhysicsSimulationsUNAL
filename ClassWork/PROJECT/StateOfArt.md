@@ -11,9 +11,16 @@ In general, a droplet bouncing on the surface of a liquid bath of the same compo
 As demonstrated in scientific works in the first two decades of twenty-first century, the properties of this *walker* droplet and its associated Faraday wave resemble quite remarkably properties commonly associated to quantum particles. For instance, Couder, Boudaoud, Protière & Fort (2010), showed that dispersion of *walkers* from single and double slit barriers is described by statistics very similar to those of single electrons. The wavelength of induced Faraday waves playing a role akin to the De Broglie wavelength. Even more striking, Bush (2015) has shown that a walker trapped inside corral, has a statistical description in terms of the amplitude of its coupled Faraday wave. The probability of finding the *walker* inside a given point of the corral is proportional to the amplitude of its wave. Moreover, phenomena such as tunnelling from barrier and orbital motion in rotating frames have also been studied by Bush (2015) both from a theoretical and experimental perspective.
 
 <p align="center">
-  <img height="400" width="400" src="IMAGES/WalkerDifraction.png">
+  <img height="250" width="250" src="IMAGES/WalkerDifraction.png">
+  <img height="250" width="250" src="IMAGES/Walker1Slit.png">
   <br> Statistics of <i>walker</i> dispersion by single slit barrier (Couder, Boudaud, Protière, 2010).
 </p>
+
+(**Some paragraph on IPT question might be written**)
+
+After discussing some of the experimental work carried out in the study of *walker* dynamics, focusing on parameter ranges for their existence, first principle models based on Navier -Stokes equations are introduced. Results from numerical simulations demonstrating quantum corral confinement and tunnelling from a barrier are presented. Finally, a discussion on the possible project questions, algorithms to be used for simulations and expected results is carried out.
+
+(**May need to complement on the nature of the models and simulations**)
 
 ## Experimental Work
 
