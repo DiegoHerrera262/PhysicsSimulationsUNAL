@@ -1,4 +1,8 @@
-# Walker Drops, Pilot-Wave Dynamics And Quantum Mechanics
+# Walker Drops and Pilot-Wave Dynamics
+
+**Authors:** Jeimy Alejandra Alarcón, Santiago Rodriguez Feijoo, Diego Alejandro Herrera Rojas.
+
+Although wave-particle duality appeared in the twentieth century in the context of Quantum Mechanics, a classical system exhibiting interesting properties commonly associated to De Broglie's pilot-wave dynamics. As summarised by Couder, Boudaoud, Protière & Fort (2010), a droplet bouncing on a bath of the same liquid shows remarkable quantum-like features. More recently, on the world famous International Physics Tournament, an interesting quest directed towards exploring the limits of the quantum-like properties of a bouncing liquid droplet, or *walker*, has been set. In the present state-of-art document, some of the main advances in the study of this particular system are presented. In addition to that, a tentative problem question is presented. The aim of this document is to illustrate the framework of the area in which the course project is to be developed during the rest of the semester.
 
 ## Experimental Work
 
