@@ -12,10 +12,6 @@ int main(void){
   int DOFs = 2;
   System NewtonCrib(NumBalls,DOFs);
 
-  // Condition for elliptical orbits r0 v0^2 < 2*100
-  // Condition for circular orbits r0 v0^2 = 100
-  // Period for circular orbits: T = 2*pi*r0/v0
-
   // Definition of parameters for 2 planet system
   double m0 = 16.0; double theta = 40;
   double x0 = -l*std::sin(theta/180 * M_PI);
@@ -43,13 +39,6 @@ int main(void){
     NewtonCrib.ElementList[i].set_Velocities(v_init);
   }
 
-  // Set up parameters for large planet
-  /*
-  x_init[0] = -x0; x_init[1] = y0;
-  NewtonCrib.ElementList[1].set_mass(1.0);
-  NewtonCrib.ElementList[0].set_Coordinates(x_init);
-  NewtonCrib.ElementList[0].set_Velocities(v_init);
-  */
   // Perform Simulation
   NewtonCrib.Evolve(0.0,10.0*M_PI*std::sqrt(2.0),0.001);
 
