@@ -8,7 +8,7 @@ const double separation = 1.0;
 int main(void){
 
   // Simulation a Newton Crib of NumBalls balls
-  int NumBalls = 5;
+  int NumBalls = 3;
   int DOFs = 2;
   System NewtonCrib(NumBalls,DOFs);
 
