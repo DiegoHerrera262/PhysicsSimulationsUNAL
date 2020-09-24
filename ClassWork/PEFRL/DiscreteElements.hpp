@@ -156,6 +156,7 @@ class Element{
     std::vector<double> Coordinates;
     std::vector<double> Velocities;
     std::vector<double> Force;
+    // Allows access to private properties & methods
     friend class System;
 
   public:
@@ -241,6 +242,7 @@ class System{
         ElementList[ii].set_NumDOFs(Elem_DOF);
         ElementList[ii].set_Coordinates(aux);
         ElementList[ii].set_Velocities(aux);
+        ElementList[ii].set_Force(aux);
       }
       // Initailize integrator parameters
       IntegParams.assign(5,0.0);
@@ -252,12 +254,15 @@ class System{
     }
     // Element interaction force
     std::vector<double> InteractionForce(int i, int j);
+    std::vector<double> ConstraintForce(int i);
     // Net Force experienced by an element
+    void SetInternalForce(int i);
     void SetTotalForce(int i);
     // Print current state of system
     void PrintCurrState();
     // Time Step evolution
     void update_all_Coordinates(double dt, double param);
+    void update_all_Forces();
     void update_all_Velocities(double dt, double param);
     void StepEvolution(double dt);
     // Time Evolution for log register

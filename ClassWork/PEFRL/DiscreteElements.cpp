@@ -95,33 +95,23 @@ model the accelaration of the elements. It should contain an integration step
 that computes the time evolution of the system, and a way to record and print
 the simulation data.
 *******************************************************************************/
-/*           THIS IS THE ONLY PART THAT SHOULD BE ACCESSIBLE TO USER          */
-/******************************************************************************
-                Interaction Force of the System (VERY IMPORTANT)
-*******************************************************************************/
-/*
-std::vector<double> System::InteractionForce(int i, int j){
-  // Model Gravitational Attraction with elastic repulsion
-  std::vector<double> Rij;              // Relative vector of two elements
-  Rij = ElementList[i].Coordinates + (-1.0) * ElementList[j].Coordinates;
-  double factor = -ElementList[i].mass * ElementList[j].mass;
-  factor *= pow(norm_squared(Rij),-1.5);
-  return factor * Rij;
-}
-*/
-// Computation of total force over element i
-/*
-void System::SetTotalForce(int i){
-
+// More efficient computation of pairwise interaction
+void System::SetInternalForce(int i){
   std::vector<double> Force;
   Force.assign(Elem_DOF,0.0);
-  for(int j = 0; j<NumElems; j++)
-    if(j != i)
-      Force += InteractionForce(i,j);
-
-  ElementList[i].Force = Force;
+  for(int j = i+1; j<NumElems; j++){
+    Force = InteractionForce(i,j);
+    ElementList[i].Force += Force;
+    ElementList[j].Force += (-1.0) * Force;
+  }
 }
-*/
+// Updates interaction forces pairwise and applies constraint forces if needed
+void System::SetTotalForce(int i){
+  // Update pairwise interaction force (This is fixed for all simlations)
+  SetInternalForce(i);
+  // Include constraints if necessary here
+  ElementList[i].Force += ConstraintForce(i);
+}
 // Print Current state of system
 void System::PrintCurrState(){
   std::vector<double> data;
@@ -137,14 +127,20 @@ void System::update_all_Coordinates(double dt, double param){
   // Update position (FOR ALL PARTICLES)
   for(int i = 0; i<NumElems; i++)
     ElementList[i].update_Coordinates(dt,param);
+}
+void System::update_all_Forces(){
   // Update forces
   for(int i = 0; i<NumElems; i++)
     SetTotalForce(i);
 }
 void System::update_all_Velocities(double dt, double param){
+  update_all_Forces();
   // Update velocities with coeff1 (FOR ALL PARTICLES)
-  for(int i = 0; i<NumElems; i++)
+  for(int i = 0; i<NumElems; i++){
     ElementList[i].update_Velocities(dt,param);
+    // Reset Forces
+    ElementList[i].Force.assign(Elem_DOF,0.0);
+  }
 }
 void System::StepEvolution(double dt){
 

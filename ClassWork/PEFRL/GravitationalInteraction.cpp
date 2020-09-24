@@ -14,13 +14,12 @@ std::vector<double> System::InteractionForce(int i, int j){
   factor *= pow(norm_squared(Rij),-1.5);
   return factor * Rij;
 }
-// Computation of total force over element i
-void System::SetTotalForce(int i){
+/******************************************************************************
+                Constraint Force of the System (VERY IMPORTANT)
+*******************************************************************************/
+std::vector<double> System::ConstraintForce(int i){
+  // Assuming gravitational interaction on free space
   std::vector<double> Force;
   Force.assign(Elem_DOF,0.0);
-  for(int j = 0; j<NumElems; j++)
-    if(j != i)
-      Force += InteractionForce(i,j);
-
-  ElementList[i].Force = Force;
+  return Force;
 }
