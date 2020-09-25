@@ -5,7 +5,7 @@
 %% Limpiar workspace
 clear all; close all; clc;
 
-OutputDataFile = 'Figures/Punto1B.pdf';
+OutputDataFile = 'Figures/Task1B.pdf';
 
 %% Definicion de Funciones Importantes
 % Parametros del modelo
@@ -35,8 +35,13 @@ plot(tdata(inrange),Sdata(inrange),'LineWidth',2.0,'Color','b'); hold on;
 plot(tdata(inrange),Rdata(inrange),'LineWidth',2.0,'Color','k'); hold on;
 plot(tdata(inrange),Idata(inrange),'LineWidth',2.0,'Color','r'); hold on;
 %% Control aspect of graphics
-xlabel('Time','FontSize',19);
-ylabel('Proportion of SIR','FontSize',19);
-title('Analytical Solution of SIR Model','FontSize',19);
+xlabel('Time','FontSize',19,'interpreter','latex');
+ylabel('Proportion of SIR','FontSize',19,'interpreter','latex');
+title('Analytical Solution of SIR Model', '$\beta=0.35$ and $\gamma=0.08$',...
+      'FontSize',19,'interpreter','latex');
+%% Inlude text labels
+text(55,0.2,'Inf.','FontSize',15,'Color','r','interpreter','latex');
+text(21,0.9,'Susc.','FontSize',15,'Color','b','interpreter','latex');
+text(40,0.85,'Recov.','FontSize',15,'Color','k','interpreter','latex');
 %% Save graphic
 exportgraphics(myplot,OutputDataFile,'ContentType','vector');
