@@ -2,10 +2,10 @@
 #include <cmath>
 #include <algorithm>
 
-const double Kwalls = 1e3;
+const double Kwalls = 5e3;
 const double Kballs = 1e8;
-const double lx = 10;
-const double ly = 10;
+const double lx = 100;
+const double ly = 100;
 /******************************************************************************/
 /*           THIS IS THE ONLY PART THAT SHOULD BE ACCESSIBLE TO USER          */
 /******************************************************************************

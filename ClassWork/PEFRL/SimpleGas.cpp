@@ -3,13 +3,13 @@
 #include <random>
 
 const double k = 1.0e-4;
-const double lx = 10;
-const double ly = 10;
+const double lx = 100;
+const double ly = 100;
 
 int main(){
 
   // Simulation a 2D Gas of NumBalls balls
-  int NumBalls = 2;
+  int NumBalls = 20;
   int DOFs = 2;
   System Gas2D(NumBalls,DOFs);
 
@@ -29,17 +29,17 @@ int main(){
 
   // Set up parameters of balls
   for(int i = 0; i < NumBalls; i++){
-    x_init[0] = (i+1)*3*r; x_init[1] = (i+1)*3*r;
-    theta = 14*M_PI/180.0;
+    x_init[0] = x(gen); x_init[1] = y(gen);
+    theta = ang(gen);
     v_init[0] = v*std::cos(theta); v_init[1] = v*std::sin(theta);
     Gas2D.ElementList[i].set_mass(m);
     Gas2D.ElementList[i].set_radius(r);
     Gas2D.ElementList[i].set_Coordinates(x_init);
-    Gas2D.ElementList[i].set_Velocities((-1.0)*v_init);
+    Gas2D.ElementList[i].set_Velocities(v_init);
   }
 
   // Perform Simulation
-  Gas2D.Evolve(0.0,12*lx/v,0.001);
+  Gas2D.Evolve(0.0,15*lx/v,0.001);
 
   // Return memory
   Gas2D.KillSystem();
