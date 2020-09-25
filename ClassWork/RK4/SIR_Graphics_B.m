@@ -43,5 +43,8 @@ title('Analytical Solution of SIR Model', '$\beta=0.35$ and $\gamma=0.08$',...
 text(55,0.2,'Inf.','FontSize',15,'Color','r','interpreter','latex');
 text(21,0.9,'Susc.','FontSize',15,'Color','b','interpreter','latex');
 text(40,0.85,'Recov.','FontSize',15,'Color','k','interpreter','latex');
-%% Save graphic
-exportgraphics(myplot,OutputDataFile,'ContentType','vector');
+%% Save figure
+tag = input('Is the plot Proper to be saved? (1/0): ');
+if tag == 1
+  exportgraphics(myplot,OutputDataFile,'ContentType','vector');
+end
