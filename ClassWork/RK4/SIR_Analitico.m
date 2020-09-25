@@ -5,6 +5,8 @@
 %% Limpiar workspace
 clear all; close all; clc;
 
+OutputDataFile = 'Figures/Punto1B.pdf';
+
 %% Definicion de Funciones Importantes
 % Parametros del modelo
 R0 = 0.0; S0 = 0.999; I0 = 0.001;
@@ -27,8 +29,14 @@ for idx = 1:length(u)
 end
 
 %% Realiza graficas
-figure(1);
+myplot = figure(1);
 inrange = (tdata >= 0) & (tdata <= 80);
 plot(tdata(inrange),Sdata(inrange),'LineWidth',2.0,'Color','b'); hold on;
 plot(tdata(inrange),Rdata(inrange),'LineWidth',2.0,'Color','k'); hold on;
 plot(tdata(inrange),Idata(inrange),'LineWidth',2.0,'Color','r'); hold on;
+%% Control aspect of graphics
+xlabel('Time','FontSize',19);
+ylabel('Proportion of SIR','FontSize',19);
+title('Analytical Solution of SIR Model','FontSize',19);
+%% Save graphic
+exportgraphics(myplot,OutputDataFile,'ContentType','vector');
