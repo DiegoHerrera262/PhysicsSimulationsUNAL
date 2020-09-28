@@ -1,142 +1,46 @@
 #include <iostream>
+#include <cmath>
 #include <vector>
 /*******************************************************************************
-       OVERLOAD OF ADDITION & SCALAR MULTIPLICATION FOR SIMPLICITY
+                              VECTOR CLASS
 ********************************************************************************
-Overload of vector addition to simplify sintax
-Template is used to define a function for all types of vectors
-The arguments are passed by reference to avoid overuse of memory
-throw is used to produce an exception in case of inconsistency
-Overloaded operators:
-- += for simplified addition
-- + for addition of 2 vectors
-- * for scalar multiplication
-- * for direct multiplication
+This class was written by a programming god that really knew what he or she was
+doing, not me. It was provided by Jose Daniel Munoz, teacher of the class.
 *******************************************************************************/
-// Overload of += operator for vectors
-template<typename T>
-std::vector<T> operator +=(std::vector<T> &lhs, const std::vector<T> &rhs) {
-    // Check if the vectors to add are of the same size
-    if (lhs.size() != rhs.size())
-      throw std::length_error("vectors must be same size to add");
-    // Perform simple addition
-    for(int i = 0; i<lhs.size(); i++)
-      lhs[i] += rhs[i];
-    return lhs;
-}
-// Overload of * operator for vectors and scalars
-template<typename T>
-std::vector<T> operator *(const T &scalar, std::vector<T> v){
-  for(int i = 0; i<v.size(); i++)
-    v[i] *= scalar;
-  return v;
-}
-// Overload of * operator for direct product of vectors
-template<typename T>
-std::vector<T> operator *(const std::vector<T> &w, std::vector<T> v){
-  // Check if the vectors to add are of the same size
-  if (w.size() != v.size())
-    throw std::length_error("vectors must be same size to add");
-  // Perform direct vector multiplication
-  for(int i = 0; i<v.size(); i++)
-    v[i] *= w[i];
-  return v;
-}
-// Overload of square norm for vectors
-template<typename T>
-double norm_squared(const std::vector<T> &w){
-  double norm2 = 0.0;
-  for(int i = 0; i<w.size(); i++)
-    norm2 += w[i] * w[i];
-  return norm2;
-}
-// Overload of addition for vectors
-template<typename T>
-std::vector<T> operator +(std::vector<T> lhs, const std::vector<T> &rhs) {
-    if (lhs.size() != rhs.size())
-        throw std::length_error("vectors must be same size to add");
-    return lhs += rhs;
-}
-template<typename T>
-double dot(const std::vector<T> &lhs, const std::vector<T> &rhs) {
-    if (lhs.size() != rhs.size())
-        throw std::length_error("vectors must be same size to add");
-    double d = 0.0;
-    for(int i = 0; i<lhs.size(); i++)
-      d += lhs[i] * rhs[i];
-    return d;
-}
-/*******************************************************************************
-                            TIME SERIES CLASS
-********************************************************************************
-Used for storing integration data. It has a beginning time, an ending time,
-an std::vector<double> for storing data and dimension. It must have methods for:
-- Inserting a data vector (of size dimension) at specific time.
-- Retrive data vector stored at specific time.
-- Print chosen DOFs as function of time.
-- Print all data series.
-Data is stored in a linear array, and datapoints are accessed modulo DOFs.
-*******************************************************************************/
-class TimeSeries{
+using namespace std;
+//---------------------- class vector3D --------------------
+class vector3D{
+private:
+  double v[3];
+ public:
+  void   cargue(double x0, double y0, double z0);
+  void   show(void);
+  // Funciones de salida de componentes
+  double x(void){return v[0];};
+  double y(void){return v[1];};
+  double z(void){return v[2];};
+  //Lectura de Elementos
+  double & operator[](int i){return v[i];};
 
-  private:
-    double t_begin;                 // Beginning time of series
-    double t_end;                   // Ending time of series
-    int NumPoints;                  // Number of points in series
-    int NumDOFs;                    // Number of Degrees of Freedom
-    std::vector<double> DataVals;   // Values of series data
-
-  public:
-    // Constructor of the TimeSeries Class (TESTED)
-    TimeSeries(double tBeg = 0.0, double tEnd = 1.0, int DOFs = 1, int NumP = 1000){
-      t_begin = tBeg;
-      t_end = tEnd;
-      NumPoints = NumP;
-      NumDOFs = DOFs;
-      DataVals.assign(NumPoints*(NumDOFs+1),\
-                  0.0);           // Need 1 extra slot for time !!!
-    }
-    // F**king Setters
-    void set_t_begin(double tB){
-      t_begin = tB;
-    }
-    void set_t_end(double tB){
-      t_end = tB;
-    }
-    void set_NumPoints(int Num){
-      NumPoints = Num;
-    }
-    void set_NumDOFs(int Num){
-      NumDOFs = Num;
-    }
-    void set_DataVals(){
-      DataVals.assign(NumPoints*(1+NumDOFs),0.0);
-    }
-    // F**king Getters
-    double get_t_begin(){
-      return t_begin;
-    }
-    double get_t_end(){
-      return t_end;
-    }
-    int get_NumPoints(){
-      return NumPoints;
-    }
-    int get_NumDOFs(){
-      return NumDOFs;
-    }
-    std::vector<double> get_DataVals(){
-      return DataVals;
-    }
-/******************************************************************************/
-    // Inserting Element in specified position of TimeSeries (TESTED)
-    void InsertDataPoint(double t, std::vector<double> d);
-    // Retrieve Datapoint at specified position of TimeSeries (TESTED)
-    std::vector<double> GetDataPoint(double t);
-    // Print whole TimeSeries (TESTED)
-    void PrintDataSeries();
-    // Retrieve certain DOFs
-    std::vector<double> GetDOFs(double t, std::vector<int> dofs);
+  // Operaciones vectoriales
+  vector3D    operator= (vector3D v2);
+  vector3D    operator+ (vector3D v2);
+  vector3D    operator+=(vector3D v2);
+  vector3D    operator- (vector3D v2);
+  vector3D    operator-=(vector3D v2);
+  // Producto por escalar
+  vector3D    operator* (double a);
+  vector3D    operator*=(double a);
+  friend  vector3D    operator* (double a,vector3D v1);
+  // Division por escalar
+  vector3D    operator/ (double a);
+  // Producto cruz
+  vector3D    operator^ (vector3D v2);
+  // Producto punto
+  double operator* (vector3D v2);
+  // Norma
+  friend  double norma2(vector3D v1);
+  friend  double norma(vector3D v1);
 };
 /*******************************************************************************
                               ELEMENT CLASS
@@ -153,9 +57,9 @@ class Element{
     double radius;
     int NumDOFs;
     // These following properties of class are mandatory
-    std::vector<double> Coordinates;
-    std::vector<double> Velocities;
-    std::vector<double> Force;
+    vector3D Coordinates;
+    vector3D Velocities;
+    vector3D Force;
     // Allows access to private properties & methods
     friend class System;
 
@@ -164,8 +68,9 @@ class Element{
       mass = m;
       radius = rad;
       NumDOFs = DOFs;
-      // Coordinates.assign(DOFs,0.0);
-      // Velocities.assign(DOFs,0.0);
+      Coordinates.cargue(0.0,0.0,0.0);
+      Velocities.cargue(0.0,0.0,0.0);
+      Force.cargue(0.0,0.0,0.0);
     }
     // F**king setters
     void set_mass(double m){
@@ -177,17 +82,14 @@ class Element{
     void set_NumDOFs(int dofs){
       NumDOFs = dofs;
     }
-    void set_Coordinates(std::vector<double> c){
-      if (c.size() == NumDOFs)
-        Coordinates = c;
+    void set_Coordinates(vector3D c){
+      Coordinates = c;
     }
-    void set_Velocities(std::vector<double> v){
-      if (v.size() == NumDOFs)
-        Velocities = v;
+    void set_Velocities(vector3D v){
+      Velocities = v;
     }
-    void set_Force(std::vector<double> f){
-      if (f.size() == NumDOFs)
-        Force = f;
+    void set_Force(vector3D f){
+      Force = f;
     }
     // F**king getters
     double get_mass(){
@@ -199,13 +101,13 @@ class Element{
     int get_NumDOFs(){
       return NumDOFs;
     }
-    std::vector<double> get_Coordinates(){
+    vector3D get_Coordinates(){
       return Coordinates;
     }
-    std::vector<double> get_Velocities(){
+    vector3D get_Velocities(){
       return Velocities;
     }
-    std::vector<double> get_Force(){
+    vector3D get_Force(){
       return Force;
     }
     void update_Coordinates(double dt, double coeff);
@@ -236,8 +138,8 @@ class System{
       // Create array of elements
       ElementList = new Element[NumElems];
       // Initialize each elelement parameters
-      std::vector<double> aux;
-      aux.assign(Elem_DOF,0.0);
+      vector3D aux;
+      aux.cargue(0.0,0.0,0.0);
       for(int ii = 0; ii<NumElems; ii++){
         ElementList[ii].set_NumDOFs(Elem_DOF);
         ElementList[ii].set_Coordinates(aux);
@@ -253,8 +155,8 @@ class System{
       IntegParams[4] = 1-2*(IntegParams[2] + IntegParams[0]);   // Coeff2
     }
     // Element interaction force
-    std::vector<double> InteractionForce(int i, int j);
-    std::vector<double> ConstraintForce(int i);
+    void InteractionForce(int i, int j);
+    void ConstraintForce(Element &ball);
     // Net Force experienced by an element
     void SetInternalForce(int i);
     void SetTotalForce(int i);

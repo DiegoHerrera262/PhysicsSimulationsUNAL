@@ -1,77 +1,81 @@
 #include "DiscreteElements.hpp"
-#include <cmath>
-
 /*******************************************************************************
-                            TIME SERIES CLASS
+                              VECTOR CLASS
 ********************************************************************************
-Used for storing integration data. It has a beginning time, an ending time,
-an std::vector<double> for storing data and dimension. It must have methods for:
-- Inserting a data vector (of size dimension) at specific time.
-- Retrive data vector stored at specific time.
-- Print chosen DOFs as function of time.
-- Print all data series.
-Data is stored in a linear array, and datapoints are accessed modulo DOFs.
+This class was written by a programming god that really knew what he or she was
+doing, not me. It was provided by Jose Daniel Munoz, teacher of the class.
 *******************************************************************************/
-// Inserting Element in specified position of TimeSeries (TESTED)
-void TimeSeries::InsertDataPoint(double t, std::vector<double> d){
-  int posData = int((NumPoints-1) * (t-t_begin)/(t_end-t_begin));
-  if (posData <= NumPoints-1){
-    if (d.size() == NumDOFs){
-      double idx = posData * (NumDOFs + 1);
-      DataVals[idx] = t;
-      for(int i = 0; i<d.size(); i++)
-        DataVals[idx+i+1] = d[i];
-      }
-      else
-        throw std::length_error("Data inconsistent with DOFs");
-  }
-  else
-    throw std::length_error("Point Outside Time Range");
+void vector3D::cargue(double x0, double y0, double z0){
+  v[0]=x0; v[1]=y0; v[2]=z0;
 }
-// Retrieve Datapoint at specified position of TimeSeries (TESTED)
-std::vector<double> TimeSeries::GetDataPoint(double t){
-  int posData = int((NumPoints-1) * (t-t_begin)/(t_end-t_begin));
-  if (posData <= NumPoints-1){
-    std::vector<double> data;
-    data.assign(NumDOFs+1,0.0);
-    double idx = posData * (NumDOFs + 1);
-    for(int i = 0; i<= NumDOFs; i++)
-      data[i] = DataVals[i+idx];
-    return data;
-  }
-  else
-    throw std::length_error("Point Outside Time Range");
+void vector3D::show(void){
+  cout << "(" <<v[0]<< "," <<v[1]<< "," <<v[2]<< ")" << endl;
 }
-// Print whole TimeSeries (TESTED)
-void TimeSeries::PrintDataSeries(){
-  int idx = 0;
-  for(int i=0; i < NumPoints; i++){
-    idx = i*(NumDOFs + 1);
-    if(DataVals[idx] != 0){
-      std::cout << "Pt" << i << "\t";
-      for(int j = 0; j <= NumDOFs; j++)
-        std::cout << DataVals[idx + j] << "\t";
-      std::cout << std::endl;
-    }
-  }
+vector3D vector3D::operator=(vector3D v2){
+  for(int i=0;i<3;i++)
+    v[i] = v2.v[i];
+  return *this;
 }
-// Retrieve certain DOFs
-std::vector<double> TimeSeries::GetDOFs(double t, std::vector<int> dofs){
-  int posData = int((NumPoints-1) * (t-t_begin)/(t_end-t_begin));
-  bool dofs_in_range = true;
-  for(int i = 0; i < dofs.size(); i++)
-    dofs_in_range = dofs_in_range && (dofs[i] <= NumDOFs);
-  bool input_is_consistent = dofs_in_range && posData <= NumPoints-1;
-  if (input_is_consistent){
-    std::vector<double> data;
-    data.assign(dofs.size(),0.0);
-    double idx = posData * (NumDOFs + 1);
-    for(int i = 0; i < data.size(); i++)
-      data[i] = DataVals[dofs[i]+idx];
-    return data;
-  }
-  else
-    throw std::length_error("Point Outside Time Range");
+vector3D vector3D::operator+(vector3D v2){
+  vector3D total;
+  for(int i=0;i<3;i++)
+    total.v[i] = v[i] + v2.v[i];
+  return total;
+}
+vector3D vector3D::operator+=(vector3D v2){
+  *this = *this + v2;
+  return *this;
+}
+vector3D vector3D::operator*(double a){
+  vector3D total;
+  for(int i=0;i<3;i++)
+    total.v[i] = a*v[i];
+  return total;
+}
+vector3D vector3D::operator*=(double a){
+  *this = (*this)*a;
+  return *this;
+}
+vector3D vector3D::operator/(double a){
+  double inver = 1.0/a;
+  vector3D total;
+  for(int i=0;i<3;i++)
+    total.v[i] = inver*v[i];
+  return total;
+}
+vector3D vector3D::operator-(vector3D v2){
+  return *this + v2*(-1);
+}
+vector3D vector3D::operator-=(vector3D v2){
+  *this = *this - v2;
+  return *this;
+}
+double vector3D::operator*(vector3D v2){
+  double p=0;
+  for(int i=0;i<3;i++)
+    p += v[i]*v2.v[i];
+  return p;
+}
+vector3D vector3D::operator^(vector3D v2){
+  vector3D c;
+  c.v[0] = v[1]*v2.v[2]-v[2]*v2.v[1];
+  c.v[1] = v[2]*v2.v[0]-v[0]*v2.v[2];
+  c.v[2] = v[0]*v2.v[1]-v[1]*v2.v[0];
+  return c;
+}
+vector3D operator*(double a,vector3D v1){
+  vector3D total;
+  total = v1*a;
+  return total;
+}
+double norma2(vector3D v1){
+  double n=0;
+  for(int i=0;i<3;i++)
+    n += v1.v[i]*v1.v[i];
+  return n;
+}
+double norma(vector3D v1){
+  return sqrt(norma2(v1));
 }
 /*******************************************************************************
                               ELEMENT CLASS
@@ -81,10 +85,10 @@ properties of the class that are determinant for the interaction between
 elements of the system
 *******************************************************************************/
 void Element::update_Coordinates(double dt, double coeff){
-  Coordinates += (coeff * dt) * Velocities;
+  Coordinates += Velocities * (coeff * dt);
 }
 void Element::update_Velocities(double dt, double coeff){
-  Velocities += (coeff * dt/mass) * Force;
+  Velocities += Force * (coeff * dt/mass);
 }
 /*******************************************************************************
                                 SYSTEM CLASS
@@ -97,12 +101,8 @@ the simulation data.
 *******************************************************************************/
 // More efficient computation of pairwise interaction
 void System::SetInternalForce(int i){
-  std::vector<double> Force;
-  Force.assign(Elem_DOF,0.0);
-  for(int j = i+1; j<NumElems; j++){
-    Force = InteractionForce(i,j);
-    ElementList[i].Force += Force;
-    ElementList[j].Force += (-1.0) * Force;
+  for(int j = i+1; j < NumElems; j++){
+    InteractionForce(i,j);
   }
 }
 // Updates interaction forces pairwise and applies constraint forces if needed
@@ -110,17 +110,16 @@ void System::SetTotalForce(int i){
   // Update pairwise interaction force (This is fixed for all simlations)
   SetInternalForce(i);
   // Include constraints if necessary here
-  ElementList[i].Force += ConstraintForce(i);
+  ConstraintForce(ElementList[i]);
 }
 // Print Current state of system
 void System::PrintCurrState(){
   std::vector<double> data;
   for(int i = 0; i < NumElems; i++){
-    data = ElementList[i].get_Coordinates();
     for(int j = 0; j < Elem_DOF; j++)
-      std::cout << data[j] << "\t";
+      cout << ElementList[i].Coordinates[j] << "\t";
   }
-  std::cout << std::endl;
+  cout << endl;
 }
 // Perform Step Evolution of System Using Velocity Verlet
 void System::update_all_Coordinates(double dt, double param){
@@ -139,7 +138,7 @@ void System::update_all_Velocities(double dt, double param){
   for(int i = 0; i<NumElems; i++){
     ElementList[i].update_Velocities(dt,param);
     // Reset Forces
-    ElementList[i].Force.assign(Elem_DOF,0.0);
+    ElementList[i].Force.cargue(0.0,0.0,0.0);
   }
 }
 void System::StepEvolution(double dt){

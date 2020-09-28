@@ -13,7 +13,7 @@ const double Kballs = 1e8;
 /******************************************************************************
                 Interaction Force of the System (VERY IMPORTANT)
 *******************************************************************************/
-std::vector<double> System::InteractionForce(int i, int j){
+void System::InteractionForce(int i, int j){
   // Model Gravitational Attraction with elastic repulsion
   std::vector<double> Rij;              // Relative vector of two elements
   Rij = ElementList[i].Coordinates + (-1.0) * ElementList[j].Coordinates;
@@ -26,15 +26,15 @@ std::vector<double> System::InteractionForce(int i, int j){
 /******************************************************************************
                 Constraint Force of the System (VERY IMPORTANT)
 *******************************************************************************/
-std::vector<double> PendullumForce(\
-  std::vector<double> &pinCoord, Element &Ball){
+vector3D PendullumForce(\
+  vector3D &pinCoord, Element &Ball){
   // Read coordinate of ball
-  std::vector<double> Rpin = Ball.get_Coordinates();
+  vector3D Rpin = Ball.get_Coordinates();
   if(pinCoord.size() != Rpin.size())
     throw std::length_error("pinCoord is not of right size");
-  Rpin += (-1.0) * pinCoord;             // Compute rad vec to pinpoint
+  Rpin -= pinCoord;             // Compute rad vec to pinpoint
   // Compute constraint force using linear approximation
-  double d = std::sqrt(norm_squared(Rpin));
+  double d = norma(Rpin));
   d = -Kstring * (1.0 - l/d);
   Rpin = d * Rpin;
   // Distance to pinpoint squared
